@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐍 Python学习聚合平台</title>
+    <title>🍊 Python学习聚合平台</title>
     <style>
         * {
             margin: 0;
@@ -22,6 +22,351 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+        }
+
+        /* 打卡侧边栏样式 */
+        .checkin-sidebar {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 100;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none; /* 默认隐藏 */
+        }
+
+        .checkin-sidebar.show {
+            display: block;
+        }
+
+        .checkin-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .checkin-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .checkin-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .checkin-header .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            background: none;
+            border: none;
+            opacity: 0.8;
+        }
+
+        .checkin-header .close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .checkin-content {
+            padding: 20px;
+        }
+
+        .checkin-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkin-stat {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .checkin-stat h4 {
+            font-size: 1.5em;
+            margin: 0 0 5px 0;
+        }
+
+        .checkin-stat p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 12px;
+        }
+
+        .checkin-form {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkin-form h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .checkin-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .checkin-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .checkin-form input,
+        .checkin-form textarea,
+        .checkin-form select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        .checkin-form input:focus,
+        .checkin-form textarea:focus,
+        .checkin-form select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .checkin-form textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .checkin-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .checkin-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .checkin-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .checkin-history h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .checkin-record {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .checkin-record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .checkin-date {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .checkin-duration {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .checkin-content-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .checkin-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .checkin-tag {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .checkin-toggle {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 101;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            }
+        }
+
+        .checkin-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .checkin-toggle.hidden {
+            transform: translateX(100px);
+        }
+
+        /* 顶部固定打卡按钮 */
+        .top-checkin-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 102;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideInLeft 0.5s ease;
+        }
+
+        .top-checkin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 打卡侧边栏滑入动画 */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .checkin-sidebar {
+                right: 10px;
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkin-sidebar {
+                position: fixed;
+                right: 0;
+                top: 0;
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                transform: none;
+                display: none;
+            }
+            
+            .checkin-sidebar.show {
+                display: block;
+            }
+            
+            .checkin-toggle {
+                display: block;
+            }
+
+            .top-checkin-btn {
+                top: 10px;
+                left: 10px;
+                padding: 10px 16px;
+                font-size: 14px;
+            }
         }
 
         .header {
@@ -599,12 +944,189 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             border-color: #ff6b6b;
         }
+
+        /* 学习资料样式 */
+        .materials-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .material-stat {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .material-stat h4 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .material-stat p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .materials-search {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .materials-search h4 {
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .material-form {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .material-form h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .material-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .material-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .material-form input,
+        .material-form textarea,
+        .material-form select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        .material-form input:focus,
+        .material-form textarea:focus,
+        .material-form select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .material-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .material-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .material-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .material-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #4facfe;
+        }
+
+        .material-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .material-category {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .material-url {
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .material-url:hover {
+            text-decoration: underline;
+        }
+
+        .material-description {
+            line-height: 1.6;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .material-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .material-tag {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .material-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐍 Python学习聚合平台</h1>
+            <h1>🍊 Python学习聚合平台</h1>
             <p>一站式Python学习资源聚合，从入门到精通，助您成为Python编程大师！</p>
         </div>
 
@@ -717,6 +1239,24 @@
                 </ul>
                 <button class="btn" onclick="openModal('notes')">管理笔记</button>
             </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">📚</div>
+                    <div class="section-title">学习资料</div>
+                </div>
+                <div class="section-description">
+                    收集整理各类Python学习资料，包括官方文档、教程链接、网盘资源等，方便随时查阅。
+                </div>
+                <ul class="feature-list">
+                    <li>官方文档链接</li>
+                    <li>教程资源收藏</li>
+                    <li>网盘资料整理</li>
+                    <li>分类标签管理</li>
+                    <li>快速访问收藏</li>
+                </ul>
+                <button class="btn" onclick="openModal('materials')">查看资料</button>
+            </div>
         </div>
 
         <div class="learning-path">
@@ -822,13 +1362,99 @@
         </div>
 
         <div class="footer">
-            <p>🐍 Python学习聚合平台 - 让Python学习更简单</p>
+            <p>🍊 Python学习聚合平台 - 让Python学习更简单</p>
             <p>持续更新中，欢迎关注最新学习资源</p>
             <div class="social-links">
                 <a href="#" title="GitHub">📚</a>
                 <a href="#" title="微信">💬</a>
                 <a href="#" title="QQ群">👥</a>
                 <a href="#" title="邮箱">📧</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部固定打卡按钮 -->
+    <button class="top-checkin-btn" onclick="openCheckinSidebar()" title="打开学习打卡">
+        📚 学习打卡
+    </button>
+
+    <!-- 打卡侧边栏 -->
+    <button class="checkin-toggle" onclick="toggleCheckinSidebar()" title="学习打卡">📚</button>
+    
+    <div class="checkin-sidebar" id="checkinSidebar">
+        <div class="checkin-header">
+            <h3>📚 学习打卡</h3>
+            <p>记录学习时间，统计学习进度</p>
+            <button class="close" onclick="closeCheckinSidebar()" title="关闭打卡">&times;</button>
+        </div>
+        
+        <div class="checkin-content">
+            <!-- 学习统计 -->
+            <div class="checkin-stats">
+                <div class="checkin-stat">
+                    <h4 id="totalStudyDays">0</h4>
+                    <p>学习天数</p>
+                </div>
+                <div class="checkin-stat">
+                    <h4 id="totalStudyHours">0</h4>
+                    <p>总学时</p>
+                </div>
+                <div class="checkin-stat">
+                    <h4 id="currentStreak">0</h4>
+                    <p>连续天数</p>
+                </div>
+                <div class="checkin-stat">
+                    <h4 id="todayStudyTime">0</h4>
+                    <p>今日学时</p>
+                </div>
+            </div>
+
+            <!-- 打卡表单 -->
+            <div class="checkin-form">
+                <h4>✏️ 今日打卡</h4>
+                <form id="checkinForm">
+                    <div class="form-group">
+                        <label for="studyStartTime">开始时间</label>
+                        <input type="time" id="studyStartTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studyEndTime">结束时间</label>
+                        <input type="time" id="studyEndTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studyContent">学习内容</label>
+                        <textarea id="studyContent" placeholder="今天学习了什么内容？" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="studyCategory">学习分类</label>
+                        <select id="studyCategory">
+                            <option value="基础语法">基础语法</option>
+                            <option value="数据结构">数据结构</option>
+                            <option value="面向对象">面向对象</option>
+                            <option value="Web开发">Web开发</option>
+                            <option value="数据分析">数据分析</option>
+                            <option value="机器学习">机器学习</option>
+                            <option value="自动化">自动化</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studyTags">学习标签</label>
+                        <input type="text" id="studyTags" placeholder="用逗号分隔，如：Python,基础,语法">
+                    </div>
+                    <div class="checkin-actions">
+                        <button type="submit" class="btn">打卡记录</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearCheckinForm()">清空</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 打卡历史 -->
+            <div class="checkin-history">
+                <h4>📅 打卡历史</h4>
+                <div id="checkinHistoryList">
+                    <!-- 打卡记录将通过JavaScript动态生成 -->
+                </div>
             </div>
         </div>
     </div>
@@ -1113,6 +1739,99 @@
         </div>
     </div>
 
+    <!-- 学习资料模态框 -->
+    <div id="materialsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('materials')">&times;</span>
+            <h2>📚 Python学习资料收藏</h2>
+            
+            <!-- 资料统计 -->
+            <div class="materials-stats">
+                <div class="material-stat">
+                    <h4 id="totalMaterials">0</h4>
+                    <p>总资料数</p>
+                </div>
+                <div class="material-stat">
+                    <h4 id="totalCategories">0</h4>
+                    <p>分类数量</p>
+                </div>
+                <div class="material-stat">
+                    <h4 id="totalTags">0</h4>
+                    <p>标签数量</p>
+                </div>
+                <div class="material-stat">
+                    <h4 id="recentMaterials">0</h4>
+                    <p>最近添加</p>
+                </div>
+            </div>
+
+            <!-- 资料搜索 -->
+            <div class="materials-search">
+                <h4>🔍 搜索资料</h4>
+                <div class="search-controls">
+                    <input type="text" id="materialSearchInput" placeholder="搜索资料标题或描述...">
+                    <select id="materialCategoryFilter">
+                        <option value="">全部分类</option>
+                        <option value="官方文档">官方文档</option>
+                        <option value="教程资源">教程资源</option>
+                        <option value="网盘资料">网盘资料</option>
+                        <option value="视频课程">视频课程</option>
+                        <option value="书籍推荐">书籍推荐</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <select id="materialTagFilter">
+                        <option value="">全部标签</option>
+                    </select>
+                    <button class="btn" onclick="searchMaterials()">搜索</button>
+                    <button class="btn" onclick="resetMaterialSearch()">重置</button>
+                </div>
+            </div>
+
+            <!-- 资料表单 -->
+            <div class="material-form">
+                <h3>✏️ 添加学习资料</h3>
+                <form id="materialForm">
+                    <div class="form-group">
+                        <label for="materialTitle">资料标题 *</label>
+                        <input type="text" id="materialTitle" required placeholder="输入资料标题">
+                    </div>
+                    <div class="form-group">
+                        <label for="materialCategory">分类</label>
+                        <select id="materialCategory">
+                            <option value="官方文档">官方文档</option>
+                            <option value="教程资源">教程资源</option>
+                            <option value="网盘资料">网盘资料</option>
+                            <option value="视频课程">视频课程</option>
+                            <option value="书籍推荐">书籍推荐</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialUrl">链接地址 *</label>
+                        <input type="url" id="materialUrl" required placeholder="输入网址链接">
+                    </div>
+                    <div class="form-group">
+                        <label for="materialTags">标签</label>
+                        <input type="text" id="materialTags" placeholder="用逗号分隔多个标签，如：Python,基础,官方">
+                    </div>
+                    <div class="form-group">
+                        <label for="materialDescription">资料描述</label>
+                        <textarea id="materialDescription" placeholder="描述这个资料的内容和用途..."></textarea>
+                    </div>
+                    <div class="material-actions">
+                        <button type="submit" class="btn">保存资料</button>
+                        <button type="button" class="btn" onclick="clearMaterialForm()">清空表单</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 资料列表 -->
+            <div id="materialsList">
+                <!-- 资料将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // 打开模态框
         function openModal(type) {
@@ -1166,6 +1885,18 @@
 
             // 初始化笔记功能
             initializeNotes();
+            
+            // 初始化学习资料功能
+            initializeMaterials();
+            // 添加默认学习资料
+            addDefaultMaterials();
+            
+            // 初始化打卡功能
+            initializeCheckin();
+            // 设置默认时间
+            setDefaultTimes();
+            // 默认隐藏打卡侧边栏
+            closeCheckinSidebar();
         });
 
         // 初始化笔记功能
@@ -1430,6 +2161,560 @@
             const date = new Date(dateString);
             return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
         }
+
+        // 学习资料功能相关变量
+        let materials = JSON.parse(localStorage.getItem('pythonMaterials')) || [];
+        let editingMaterialId = null;
+
+        // 打卡功能相关变量
+        let checkins = JSON.parse(localStorage.getItem('pythonCheckins')) || [];
+        let editingCheckinId = null;
+
+        // 初始化学习资料功能
+        function initializeMaterials() {
+            // 绑定资料表单提交事件
+            document.getElementById('materialForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveMaterial();
+            });
+
+            // 更新资料统计
+            updateMaterialStats();
+            // 更新标签过滤器
+            updateMaterialTagFilter();
+            // 渲染资料列表
+            renderMaterials();
+        }
+
+        // 保存学习资料
+        function saveMaterial() {
+            const title = document.getElementById('materialTitle').value.trim();
+            const category = document.getElementById('materialCategory').value;
+            const url = document.getElementById('materialUrl').value.trim();
+            const tags = document.getElementById('materialTags').value.trim();
+            const description = document.getElementById('materialDescription').value.trim();
+
+            if (!title || !url) {
+                alert('请填写资料标题和链接地址！');
+                return;
+            }
+
+            const material = {
+                id: editingMaterialId || Date.now(),
+                title: title,
+                category: category,
+                url: url,
+                tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+                description: description,
+                createdAt: editingMaterialId ? materials.find(m => m.id === editingMaterialId).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingMaterialId) {
+                // 编辑模式：更新现有资料
+                const index = materials.findIndex(m => m.id === editingMaterialId);
+                if (index !== -1) {
+                    materials[index] = material;
+                }
+                editingMaterialId = null;
+            } else {
+                // 新建模式：添加新资料
+                materials.unshift(material);
+            }
+
+            // 保存到本地存储
+            localStorage.setItem('pythonMaterials', JSON.stringify(materials));
+            
+            // 更新界面
+            updateMaterialStats();
+            updateMaterialTagFilter();
+            renderMaterials();
+            clearMaterialForm();
+            
+            alert(editingMaterialId ? '资料更新成功！' : '资料保存成功！');
+        }
+
+        // 渲染学习资料列表
+        function renderMaterials() {
+            const materialsList = document.getElementById('materialsList');
+            
+            if (materials.length === 0) {
+                materialsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><h3>还没有学习资料</h3><p>开始添加您的Python学习资料吧！</p></div>';
+                return;
+            }
+
+            materialsList.innerHTML = materials.map(material => `
+                <div class="material-card">
+                    <div class="material-category">${material.category}</div>
+                    <div class="material-title">${material.title}</div>
+                    <a href="${material.url}" target="_blank" class="material-url">${material.url}</a>
+                    ${material.description ? `<div class="material-description">${material.description}</div>` : ''}
+                    <div class="material-tags">
+                        ${material.tags.map(tag => `<span class="material-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="material-meta">
+                        <span>创建时间: ${formatDate(material.createdAt)}</span>
+                        <span>更新时间: ${formatDate(material.updatedAt)}</span>
+                    </div>
+                    <div class="material-actions">
+                        <button class="btn" onclick="editMaterial(${material.id})">✏️ 编辑</button>
+                        <button class="btn" onclick="deleteMaterial(${material.id})">🗑️ 删除</button>
+                        <button class="btn" onclick="openMaterial(${material.id})">🔗 打开链接</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 编辑学习资料
+        function editMaterial(materialId) {
+            const material = materials.find(m => m.id === materialId);
+            if (material) {
+                editingMaterialId = materialId;
+                document.getElementById('materialTitle').value = material.title;
+                document.getElementById('materialCategory').value = material.category;
+                document.getElementById('materialUrl').value = material.url;
+                document.getElementById('materialTags').value = material.tags.join(', ');
+                document.getElementById('materialDescription').value = material.description;
+                
+                // 更改表单标题和按钮
+                document.querySelector('.material-form h3').textContent = '✏️ 编辑学习资料';
+                document.querySelector('.material-form button[type="submit"]').textContent = '更新资料';
+                
+                // 滚动到表单
+                document.querySelector('.material-form').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 删除学习资料
+        function deleteMaterial(materialId) {
+            if (confirm('确定要删除这条学习资料吗？此操作不可恢复！')) {
+                materials = materials.filter(m => m.id !== materialId);
+                localStorage.setItem('pythonMaterials', JSON.stringify(materials));
+                
+                updateMaterialStats();
+                updateMaterialTagFilter();
+                renderMaterials();
+                
+                alert('学习资料删除成功！');
+            }
+        }
+
+        // 打开学习资料链接
+        function openMaterial(materialId) {
+            const material = materials.find(m => m.id === materialId);
+            if (material) {
+                window.open(material.url, '_blank');
+            }
+        }
+
+        // 搜索学习资料
+        function searchMaterials() {
+            const searchTerm = document.getElementById('materialSearchInput').value.toLowerCase();
+            const category = document.getElementById('materialCategoryFilter').value;
+            const tag = document.getElementById('materialTagFilter').value;
+
+            let filteredMaterials = materials.filter(material => {
+                const titleMatch = material.title.toLowerCase().includes(searchTerm);
+                const descriptionMatch = material.description.toLowerCase().includes(searchTerm);
+                const categoryMatch = !category || material.category === category;
+                const tagMatch = !tag || material.tags.includes(tag);
+
+                return (titleMatch || descriptionMatch) && categoryMatch && tagMatch;
+            });
+
+            renderFilteredMaterials(filteredMaterials);
+        }
+
+        // 渲染过滤后的学习资料
+        function renderFilteredMaterials(filteredMaterials) {
+            const materialsList = document.getElementById('materialsList');
+            
+            if (filteredMaterials.length === 0) {
+                materialsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><h3>没有找到匹配的学习资料</h3><p>请调整搜索条件</p></div>';
+                return;
+            }
+
+            materialsList.innerHTML = filteredMaterials.map(material => `
+                <div class="material-card">
+                    <div class="material-category">${material.category}</div>
+                    <div class="material-title">${material.title}</div>
+                    <a href="${material.url}" target="_blank" class="material-url">${material.url}</a>
+                    ${material.description ? `<div class="material-description">${material.description}</div>` : ''}
+                    <div class="material-tags">
+                        ${material.tags.map(tag => `<span class="material-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="material-meta">
+                        <span>创建时间: ${formatDate(material.createdAt)}</span>
+                        <span>更新时间: ${formatDate(material.updatedAt)}</span>
+                    </div>
+                    <div class="material-actions">
+                        <button class="btn" onclick="editMaterial(${material.id})">✏️ 编辑</button>
+                        <button class="btn" onclick="deleteMaterial(${material.id})">🗑️ 删除</button>
+                        <button class="btn" onclick="openMaterial(${material.id})">🔗 打开链接</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 重置学习资料搜索
+        function resetMaterialSearch() {
+            document.getElementById('materialSearchInput').value = '';
+            document.getElementById('materialCategoryFilter').value = '';
+            document.getElementById('materialTagFilter').value = '';
+            renderMaterials();
+        }
+
+        // 清空学习资料表单
+        function clearMaterialForm() {
+            document.getElementById('materialForm').reset();
+            editingMaterialId = null;
+            document.querySelector('.material-form h3').textContent = '✏️ 添加学习资料';
+            document.querySelector('.material-form button[type="submit"]').textContent = '保存资料';
+        }
+
+        // 更新学习资料统计
+        function updateMaterialStats() {
+            document.getElementById('totalMaterials').textContent = materials.length;
+            
+            const categories = [...new Set(materials.map(material => material.category))];
+            document.getElementById('totalCategories').textContent = categories.length;
+            
+            const allTags = materials.flatMap(material => material.tags);
+            const uniqueTags = [...new Set(allTags)];
+            document.getElementById('totalTags').textContent = uniqueTags.length;
+            
+            const recentMaterials = materials.filter(material => {
+                const materialDate = new Date(material.updatedAt);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return materialDate > weekAgo;
+            });
+            document.getElementById('recentMaterials').textContent = recentMaterials.length;
+        }
+
+        // 更新学习资料标签过滤器
+        function updateMaterialTagFilter() {
+            const tagFilter = document.getElementById('materialTagFilter');
+            const allTags = materials.flatMap(material => material.tags);
+            const uniqueTags = [...new Set(allTags)];
+            
+            tagFilter.innerHTML = '<option value="">全部标签</option>';
+            uniqueTags.forEach(tag => {
+                const option = document.createElement('option');
+                option.value = tag;
+                option.textContent = tag;
+                tagFilter.appendChild(option);
+            });
+        }
+
+        // 添加默认的学习资料
+        function addDefaultMaterials() {
+            if (materials.length === 0) {
+                const defaultMaterials = [
+                    {
+                        id: Date.now(),
+                        title: '全国计算机等级考试Python语言程序设计考试大纲',
+                        category: '官方文档',
+                        url: 'https://ncre.neea.edu.cn/html1/report/2501/88-1.htm',
+                        tags: ['Python', '考试大纲', '官方文档', 'NCRE'],
+                        description: '全国计算机等级考试Python语言程序设计考试大纲，包含考试内容、要求等官方信息。',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: Date.now() + 1,
+                        title: 'Python学习资料网盘分享',
+                        category: '网盘资料',
+                        url: 'https://pan.quark.cn/s/48713a097772#/list/share/415895f1136444018925ae961e7cef68',
+                        tags: ['Python', '网盘资料', '学习资源', '分享'],
+                        description: 'Python学习资料网盘分享，包含各种Python学习教程、项目案例等资源。',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: Date.now() + 2,
+                        title: 'Python123 - 编程更简单',
+                        category: '教程资源',
+                        url: 'https://python123.io/',
+                        tags: ['Python', '教程资源', '在线编程', '互动课堂', 'Python123'],
+                        description: 'Python123是专注于为中国高等院校教学Python语言而开发的学习工具网站，集Python高等教师课题教学、日常考试、习题训练、计算生态以及计算机等级考试Python部分的指导模拟网站。',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    }
+                ];
+                
+                materials.push(...defaultMaterials);
+                localStorage.setItem('pythonMaterials', JSON.stringify(materials));
+                
+                updateMaterialStats();
+                updateMaterialTagFilter();
+                renderMaterials();
+            }
+        }
+
+        // 在页面加载完成后初始化学习资料功能
+        // 注意：这里不需要重复的DOMContentLoaded事件监听器
+        // 学习资料功能将在现有的DOMContentLoaded事件中初始化
+
+        // 打卡功能实现
+        function initializeCheckin() {
+            // 绑定打卡表单提交事件
+            document.getElementById('checkinForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveCheckin();
+            });
+
+            // 更新打卡统计
+            updateCheckinStats();
+            // 渲染打卡历史
+            renderCheckinHistory();
+        }
+
+        // 设置默认时间
+        function setDefaultTimes() {
+            const now = new Date();
+            const startTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2小时前
+            const endTime = now;
+            
+            document.getElementById('studyStartTime').value = startTime.toTimeString().slice(0, 5);
+            document.getElementById('studyEndTime').value = endTime.toTimeString().slice(0, 5);
+        }
+
+        // 保存打卡记录
+        function saveCheckin() {
+            const startTime = document.getElementById('studyStartTime').value;
+            const endTime = document.getElementById('studyEndTime').value;
+            const content = document.getElementById('studyContent').value.trim();
+            const category = document.getElementById('studyCategory').value;
+            const tags = document.getElementById('studyTags').value.trim();
+
+            if (!startTime || !endTime || !content) {
+                alert('请填写完整的学习信息！');
+                return;
+            }
+
+            // 计算学习时长
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
+            let duration = (end - start) / (1000 * 60 * 60); // 小时
+
+            if (duration <= 0) {
+                alert('结束时间必须晚于开始时间！');
+                return;
+            }
+
+            if (duration > 24) {
+                alert('学习时长不能超过24小时！');
+                return;
+            }
+
+            const checkin = {
+                id: editingCheckinId || Date.now(),
+                date: new Date().toISOString().split('T')[0], // 当前日期
+                startTime: startTime,
+                endTime: endTime,
+                duration: Math.round(duration * 100) / 100, // 保留两位小数
+                content: content,
+                category: category,
+                tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+                createdAt: editingCheckinId ? checkins.find(c => c.id === editingCheckinId).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingCheckinId) {
+                // 编辑模式：更新现有记录
+                const index = checkins.findIndex(c => c.id === editingCheckinId);
+                if (index !== -1) {
+                    checkins[index] = checkin;
+                }
+                editingCheckinId = null;
+            } else {
+                // 新建模式：添加新记录
+                checkins.unshift(checkin);
+            }
+
+            // 保存到本地存储
+            localStorage.setItem('pythonCheckins', JSON.stringify(checkins));
+            
+            // 更新界面
+            updateCheckinStats();
+            renderCheckinHistory();
+            clearCheckinForm();
+            
+            alert(editingCheckinId ? '打卡记录更新成功！' : '打卡记录保存成功！');
+        }
+
+        // 渲染打卡历史
+        function renderCheckinHistory() {
+            const historyList = document.getElementById('checkinHistoryList');
+            
+            if (checkins.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;"><p>还没有打卡记录</p><p>开始记录您的学习时间吧！</p></div>';
+                return;
+            }
+
+            // 按日期分组显示
+            const groupedCheckins = groupCheckinsByDate(checkins);
+            
+            historyList.innerHTML = Object.keys(groupedCheckins).map(date => {
+                const dayCheckins = groupedCheckins[date];
+                const totalDayDuration = dayCheckins.reduce((sum, c) => sum + c.duration, 0);
+                
+                return `
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px;">
+                            ${formatDateDisplay(date)} (${totalDayDuration}h)
+                        </div>
+                        ${dayCheckins.map(checkin => `
+                            <div class="checkin-record">
+                                <div class="checkin-record-header">
+                                    <span class="checkin-date">${checkin.startTime} - ${checkin.endTime}</span>
+                                    <span class="checkin-duration">${checkin.duration}h</span>
+                                </div>
+                                <div class="checkin-content-text">${checkin.content}</div>
+                                <div class="checkin-tags">
+                                    <span class="checkin-tag">${checkin.category}</span>
+                                    ${checkin.tags.map(tag => `<span class="checkin-tag">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 按日期分组打卡记录
+        function groupCheckinsByDate(checkins) {
+            const grouped = {};
+            checkins.forEach(checkin => {
+                if (!grouped[checkin.date]) {
+                    grouped[checkin.date] = [];
+                }
+                grouped[checkin.date].push(checkin);
+            });
+            return grouped;
+        }
+
+        // 格式化日期显示
+        function formatDateDisplay(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            if (dateString === today.toISOString().split('T')[0]) {
+                return '今天';
+            } else if (dateString === yesterday.toISOString().split('T')[0]) {
+                return '昨天';
+            } else {
+                return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+            }
+        }
+
+        // 更新打卡统计
+        function updateCheckinStats() {
+            if (checkins.length === 0) {
+                document.getElementById('totalStudyDays').textContent = '0';
+                document.getElementById('totalStudyHours').textContent = '0';
+                document.getElementById('currentStreak').textContent = '0';
+                document.getElementById('todayStudyTime').textContent = '0';
+                return;
+            }
+
+            // 总学习天数
+            const uniqueDates = [...new Set(checkins.map(c => c.date))];
+            document.getElementById('totalStudyDays').textContent = uniqueDates.length;
+
+            // 总学习时长
+            const totalHours = checkins.reduce((sum, c) => sum + c.duration, 0);
+            document.getElementById('totalStudyHours').textContent = totalHours.toFixed(1);
+
+            // 连续学习天数
+            const currentStreak = calculateCurrentStreak(uniqueDates);
+            document.getElementById('currentStreak').textContent = currentStreak;
+
+            // 今日学习时长
+            const today = new Date().toISOString().split('T')[0];
+            const todayCheckins = checkins.filter(c => c.date === today);
+            const todayHours = todayCheckins.reduce((sum, c) => sum + c.duration, 0);
+            document.getElementById('todayStudyTime').textContent = todayHours.toFixed(1);
+        }
+
+        // 计算连续学习天数
+        function calculateCurrentStreak(dates) {
+            if (dates.length === 0) return 0;
+            
+            const sortedDates = dates.sort().reverse();
+            const today = new Date().toISOString().split('T')[0];
+            let streak = 0;
+            let currentDate = new Date(today);
+            
+            for (let i = 0; i < 365; i++) { // 最多检查一年
+                const dateStr = currentDate.toISOString().split('T')[0];
+                if (sortedDates.includes(dateStr)) {
+                    streak++;
+                    currentDate.setDate(currentDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            
+            return streak;
+        }
+
+        // 清空打卡表单
+        function clearCheckinForm() {
+            document.getElementById('checkinForm').reset();
+            editingCheckinId = null;
+            setDefaultTimes();
+        }
+
+        // 打开打卡侧边栏
+        function openCheckinSidebar() {
+            const sidebar = document.getElementById('checkinSidebar');
+            const toggle = document.querySelector('.checkin-toggle');
+            
+            sidebar.classList.add('show');
+            sidebar.style.display = 'block';
+            toggle.classList.remove('hidden');
+            
+            // 添加打开动画效果
+            sidebar.style.animation = 'slideIn 0.3s ease';
+        }
+
+        // 关闭打卡侧边栏
+        function closeCheckinSidebar() {
+            const sidebar = document.getElementById('checkinSidebar');
+            const toggle = document.querySelector('.checkin-toggle');
+            
+            sidebar.classList.remove('show');
+            sidebar.style.display = 'none';
+            toggle.classList.add('hidden');
+        }
+
+        // 切换打卡侧边栏显示/隐藏
+        function toggleCheckinSidebar() {
+            const sidebar = document.getElementById('checkinSidebar');
+            const toggle = document.querySelector('.checkin-toggle');
+            
+            if (window.innerWidth <= 768) {
+                // 移动端：显示/隐藏侧边栏
+                sidebar.classList.toggle('show');
+            } else {
+                // 桌面端：隐藏侧边栏和切换按钮
+                if (sidebar.style.display === 'none' || !sidebar.classList.contains('show')) {
+                    openCheckinSidebar();
+                } else {
+                    closeCheckinSidebar();
+                }
+            }
+        }
+
+        // 页面加载时设置默认时间
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延迟设置默认时间，确保表单元素已加载
+            setTimeout(setDefaultTimes, 100);
+        });
     </script>
 </body>
 </html>
